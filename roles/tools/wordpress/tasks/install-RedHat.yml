@@ -1,0 +1,34 @@
+---
+- name: download wordpress archive
+  get_url:
+    url: https://wordpress.org/latest.tar.gz
+    dest: /tmp/wp-latest.tar.gz
+
+# SELINUXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+-
+- name: extract wordpress into tmp
+  unarchive:
+    src: /tmp/wp-latest.tar.gz
+    dest: /tmp
+    owner: apache
+    group: apache
+    copy: no
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: remove index.html
+  command: rm -rf /var/www/html/index.html
+  ignore_errors: "true"
+
+- name: clean html
+  shell: rm -rf /var/www/html/*
+
+- name: move wordpress files
+  shell: mv -f /tmp/wordpress/* /var/www/html/
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: set wordpress config
+  template:
+    src: wp-config.php.j2
+    dest: /var/www/html/wp-config.php
+    owner: apache
+    group: apache

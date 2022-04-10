@@ -1,0 +1,42 @@
+---
+- name: install httpd
+  dnf:
+    name: httpd
+    state: present
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: set httpd config
+  template:
+    src: httpd.conf.j2
+    dest: "/etc/httpd/conf/httpd.conf"
+  notify:
+   - restart apache
+
+- name: Enable the Apache2 module rewrite
+  community.general.apache2_module:
+    state: present
+    name: rewrite
+
+- name: Change owner of www/html
+  file:
+    path: /var/www/html
+    state: directory
+    owner: apache
+    group: apache
+    mode: 0755
+
+- name: check if httpd is started and enabled on boot
+  systemd:
+    daemon_reload: yes
+    name: httpd
+    enabled: yes
+    state: started
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: disable selinux
+  template:
+    src: selinux.config.j2
+    dest: "/etc/selinux/config"
+
+- name: reboot
+  reboot:
