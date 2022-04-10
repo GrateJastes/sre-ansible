@@ -1,0 +1,36 @@
+---
+- name: install apache2
+  apt:
+    name:
+      - apache2
+      - apache2-utils
+    state: present
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: set apache2 config
+  template:
+    src: 0000.conf.j2
+    dest: "/etc/apache2/sites-available/000-default.conf"
+  notify:
+   - restart apache
+
+- name: Enable the Apache2 module rewrite
+  community.general.apache2_module:
+    state: present
+    name: rewrite
+
+- name: Change owner of www/html
+  file:
+    path: /var/www/html
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: 0755
+
+- name: check if httpd is started and enabled on boot
+  systemd:
+    daemon_reload: yes
+    name: apache2
+    enabled: yes
+    state: started
+  ignore_errors: "{{ ansible_check_mode }}"

@@ -4,8 +4,7 @@
     name: "{{ packages }}"
   vars:
     packages:
-      - python3-mysqldb
-      - mysql-common
+      - mysql-client
       - mysql-server
 
 - name: set mysql config my.cnf
@@ -36,4 +35,22 @@
 
 - name: Ensure MySQL is started and enabled on boot.
   service: "name=mysql state=started enabled=true"
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: "MANUAL ACTION: mysql_secure_installation"
+  pause:
+    prompt: "Done? Press ENTER"
+
+- name: create wordpress database
+  mysql_db:
+    name: "{{ wp_db_name }}"
+    state: present
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: create wordpress database user
+  mysql_user:
+    name: "{{ wp_db_user }}"
+    password: "{{ wp_db_password }}"
+    priv: "{{ wp_db_name }}.*:ALL"
+    state: present
   ignore_errors: "{{ ansible_check_mode }}"

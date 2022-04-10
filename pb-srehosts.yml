@@ -1,12 +1,13 @@
 ---
 - name: Sre quest hosts
   hosts:
+    - prod102
     - prod103
   remote_user: sre-quest
   become: true
   roles:
-    - {role: 'tools/nginx', tags: nginx}
     - {role: 'tools/php', tags: php}
     - {role: 'stores/mysql', tags: mysql}
     - {role: 'tools/wordpress', tags: wordpress}
-    - {role: 'tools/apache', tags: apache}
+    - {role: 'tools/nginx', tags: nginx}
+    - {role: 'tools/apache', tags: apache}  # MUST BE THE LAST ONE!!!

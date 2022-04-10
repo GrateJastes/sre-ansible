@@ -2,6 +2,5 @@
 - include_tasks: install-RedHat.yml
   when: ansible_os_family == 'RedHat'
 
-#- include_tasks: install-Debian.yml
-#  when: ansible_os_family == 'Debian'
-
+- include_tasks: install-Ubuntu.yml
+  when: ansible_os_family == 'Ubuntu'

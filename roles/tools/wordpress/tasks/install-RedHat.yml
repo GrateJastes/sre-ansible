@@ -5,7 +5,7 @@
     dest: /tmp/wp-latest.tar.gz
 
 # SELINUXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
--
+
 - name: extract wordpress into tmp
   unarchive:
     src: /tmp/wp-latest.tar.gz

@@ -1,0 +1,35 @@
+---
+- name: install nginx
+  apt:
+    name: nginx
+    state: present
+    update_cache: yes
+
+- name: set nginx config
+  template:
+    src: nginx.conf.j2
+    dest: "/etc/nginx/sites-available/wp.com"
+  notify:
+   - restart nginx
+
+- name: create sites-enabled directory
+  file:
+    state: directory
+    dest: /etc/nginx/sites-enabled/
+
+- name: create nginx link
+  ignore_errors: "{{ ansible_check_mode }}"
+  file:
+    state: link
+    src: "/etc/nginx/sites-available/wp.com"
+    dest: "/etc/nginx/sites-enabled/wp.com"
+  notify:
+   - restart nginx
+
+- name: enable and start nginx
+  systemd:
+    daemon_reload: yes
+    name: nginx
+    enabled: yes
+    state: started
+  ignore_errors: "{{ ansible_check_mode }}"

@@ -1,0 +1,12 @@
+- name: install php
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - php7.4
+    - php7.4-mysql
+    - phplibapache2-mod-php7.4
+    - php7.4-cli
+    - php7.4-cgi
+    - php7.4-gd
+  ignore_errors: "{{ ansible_check_mode }}"
